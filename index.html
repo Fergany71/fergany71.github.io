@@ -196,300 +196,284 @@
         <div id="chat-bubble"><i class="fas fa-robot fa-2x text-white"></i></div>
     </div>
     
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // This script is responsible for all the dynamic functionality of the website.
-        const docHtml = document.documentElement;
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // This script is responsible for all the dynamic functionality of the website.
+    const docHtml = document.documentElement;
 
-        // --- Preloader ---
-        const preloader = document.getElementById('preloader');
-        setTimeout(() => {
-            if (preloader) preloader.classList.add('loaded');
-        }, 1500);
+    // --- Preloader ---
+    const preloader = document.getElementById('preloader');
+    setTimeout(() => {
+        if (preloader) preloader.classList.add('loaded');
+    }, 1500);
 
-        // --- Header Features ---
-        const clockEl = document.getElementById('rgb-clock');
-        const mobileClockEl = document.getElementById('mobile-rgb-clock');
-        const progressBar = document.getElementById('scroll-progress-bar');
+    // --- Header Features ---
+    const clockEl = document.getElementById('rgb-clock');
+    const mobileClockEl = document.getElementById('mobile-rgb-clock');
+    const progressBar = document.getElementById('scroll-progress-bar');
 
-        function updateHeader() {
-            const now = new Date();
-            const options = { timeZone: 'Africa/Cairo', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-            const timeString = now.toLocaleTimeString('en-US', options);
-            if (clockEl) clockEl.textContent = timeString;
-            if (mobileClockEl) mobileClockEl.textContent = timeString;
-            
-            if (progressBar) {
-                const scrollTotal = docHtml.scrollHeight - docHtml.clientHeight;
-                progressBar.style.width = `${(window.scrollY / scrollTotal) * 100}%`;
-            }
-        }
-        setInterval(updateHeader, 1000);
-        window.addEventListener('scroll', updateHeader);
-        updateHeader();
-
-        // --- Theme Switcher ---
-        const themeCheckbox = document.getElementById('theme-checkbox');
-        function applyTheme(theme) {
-            docHtml.classList.remove('light', 'dark');
-            docHtml.classList.add(theme);
-            localStorage.setItem('theme', theme);
-        }
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        applyTheme(currentTheme);
-        if (currentTheme === 'dark') themeCheckbox.checked = true;
+    function updateHeader() {
+        const now = new Date();
+        const options = { timeZone: 'Africa/Cairo', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+        const timeString = now.toLocaleTimeString('en-US', options);
+        if (clockEl) clockEl.textContent = timeString;
+        if (mobileClockEl) mobileClockEl.textContent = timeString;
         
-        themeCheckbox.addEventListener('change', () => {
-            applyTheme(themeCheckbox.checked ? 'dark' : 'light');
-        });
-
-        // --- GSAP Word Animation Fix ---
-        gsap.registerPlugin(ScrollTrigger);
-        document.querySelectorAll(".g-title").forEach(title => {
-            if(title.dataset.text) {
-                const words = title.dataset.text.split(/(\s|,|\?)/);
-                title.textContent = "";
-                words.forEach(word => {
-                    if (word.trim().length > 0) {
-                        const span = document.createElement("span");
-                        span.className = "word";
-                        span.textContent = word;
-                        title.appendChild(span);
-                    } else {
-                         title.appendChild(document.createTextNode(word));
-                    }
-                });
-                gsap.from(title.querySelectorAll(".word"), {
-                    y: '115%', stagger: 0.1, duration: 0.5, ease: 'power3.out',
-                    scrollTrigger: { trigger: title, start: "top 90%", toggleActions: "play none none none" }
-                });
-            }
-        });
-
-        // --- Service Cards ---
-        const services = [
-            { icon: 'fa-laptop-code', title: 'تطوير الواجهات', desc: 'بناء واجهات ويب تفاعلية وسريعة باستخدام أحدث التقنيات زي React و Next.js.' },
-            { icon: 'fa-palette', title: 'تصميم UI/UX', desc: 'تصميم تجارب مستخدم سهلة وجذابة بتركز على تحقيق أهدافك ورضا المستخدمين.' },
-            { icon: 'fa-user-shield', title: 'أساسيات الأمان', desc: 'تطبيق مفاهيم الأمان الأساسية لحماية مواقع الويب، كجزء من شغفه بمجال الاختراق.' }
-        ];
-        const servicesContainer = document.querySelector('#services .grid');
-        if (servicesContainer) {
-            servicesContainer.innerHTML = services.map((service, index) => `
-                <div class="bg-secondary p-8 rounded-lg shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 reveal" data-delay="${index * 0.2}">
-                    <i class="fas ${service.icon} fa-3x text-primary mb-4"></i>
-                    <h3 class="text-2xl font-bold mb-2">${service.title}</h3>
-                    <p class="text-text-secondary-color">${service.desc}</p>
-                </div>
-            `).join('');
+        if (progressBar) {
+            const scrollTotal = docHtml.scrollHeight - docHtml.clientHeight;
+            progressBar.style.width = `${(window.scrollY / scrollTotal) * 100}%`;
         }
-        
-        // --- Nav & Mobile Menu Logic ---
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-        document.querySelectorAll('.nav-link-mobile, .nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                if(link.classList.contains('nav-link-mobile')) {
-                    mobileMenu.classList.add('hidden');
-                }
-                const targetId = link.getAttribute('href');
-                if(document.querySelector(targetId)) {
-                   e.preventDefault();
-                   document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
+    }
+    setInterval(updateHeader, 1000);
+    window.addEventListener('scroll', updateHeader);
+    updateHeader();
 
-        const navLinks = document.querySelectorAll('#main-nav .nav-link');
-        const pageSections = document.querySelectorAll('main section');
-        function updateActiveLink() {
-            let current = pageSections[0]?.id || '';
-            pageSections.forEach(section => {
-                if (window.scrollY >= section.offsetTop - 150) current = section.id;
-            });
-            navLinks.forEach(link => {
-                link.classList.remove('nav-active');
-                if (link.getAttribute('href') === '#' + current) link.classList.add('nav-active');
-            });
-        }
-        window.addEventListener('scroll', updateActiveLink);
-        updateActiveLink();
+    // --- Theme Switcher ---
+    const themeCheckbox = document.getElementById('theme-checkbox');
+    function applyTheme(theme) {
+        docHtml.classList.remove('light', 'dark');
+        docHtml.classList.add(theme);
+        localStorage.setItem('theme', theme);
+    }
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    applyTheme(currentTheme);
+    if (currentTheme === 'dark') themeCheckbox.checked = true;
+    
+    themeCheckbox.addEventListener('change', () => {
+        applyTheme(themeCheckbox.checked ? 'dark' : 'light');
+    });
 
-        // --- AI Chatbot with OpenRouter API ---
-        const chatWidget = {
-            bubble: document.getElementById('chat-bubble'),
-            window: document.getElementById('chat-window'),
-            messages: document.getElementById('chat-messages'),
-            input: document.getElementById('chat-input'),
-            sendBtn: document.getElementById('chat-send-btn'),
-            quickReplies: document.getElementById('chat-quick-replies'),
-            conversationHistory: [],
-
-            init() {
-                this.bubble.addEventListener('click', () => this.toggle());
-                this.sendBtn.addEventListener('click', () => this.sendMessage());
-                this.input.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.sendMessage(); } });
-            },
-            toggle() { 
-                this.window.classList.toggle('open');
-                if(this.window.classList.contains('open') && this.messages.children.length === 0) {
-                     this.addMessage("أهلاً بيك يا غالي! أنا مساعد عمر الرقمي، خد راحتك واسأل في أي حاجة تخطر على بالك. 😉", 'ai');
-                     this.showQuickReplies(["مين عمر؟ 🤔", "احكيلي نكتة 😂", "إيه خدماته؟ 👨‍💻"]);
-                }
-            },
-            sendMessage() {
-                const userMessage = this.input.value.trim();
-                if (!userMessage) return;
-                this.addMessage(userMessage, 'user');
-                this.input.value = '';
-                this.quickReplies.innerHTML = '';
-                this.getAIResponse(userMessage);
-            },
-            sendQuickReply(text) {
-                this.addMessage(text, 'user');
-                this.quickReplies.innerHTML = '';
-                this.getAIResponse(text);
-            },
-            addMessage(content, type) {
-                const div = document.createElement('div');
-                div.className = `message ${type}`;
-                if (type === 'ai') {
-                    const avatar = `<img src="https://placehold.co/40x40/0d9488/ffffff?text=AI" alt="AI Avatar">`;
-                    const textContent = `<div>${marked.parse(content)}</div>`;
-                    div.innerHTML = avatar + textContent;
-                    this.conversationHistory.push({ role: 'assistant', content: content });
+    // --- GSAP Word Animation Fix ---
+    gsap.registerPlugin(ScrollTrigger);
+    document.querySelectorAll(".g-title").forEach(title => {
+        if(title.dataset.text) {
+            const words = title.dataset.text.split(/(\s|,|\?)/);
+            title.textContent = "";
+            words.forEach(word => {
+                if (word.trim().length > 0) {
+                    const span = document.createElement("span");
+                    span.className = "word";
+                    span.textContent = word;
+                    title.appendChild(span);
                 } else {
-                    div.textContent = content;
-                    this.conversationHistory.push({ role: 'user', content: content });
+                     title.appendChild(document.createTextNode(word));
                 }
-                this.messages.appendChild(div);
-                this.messages.scrollTop = this.messages.scrollHeight;
-            },
-            showQuickReplies(replies) {
-                this.quickReplies.innerHTML = '';
-                replies.forEach(text => {
-                    const btn = document.createElement('button');
-                    btn.className = 'quick-reply-btn';
-                    btn.textContent = text;
-                    btn.onclick = () => this.sendQuickReply(text);
-                    this.quickReplies.appendChild(btn);
-                });
-            },
-            
-            async getAIResponse(prompt) {
-                const loadingDiv = document.createElement('div');
-                loadingDiv.className = 'message ai';
-                loadingDiv.innerHTML = `<img src="https://placehold.co/40x40/0d9488/ffffff?text=AI" alt="AI Avatar"><div><span class="animate-pulse">بجمعلك الرد... 🤔</span></div>`;
-                this.messages.appendChild(loadingDiv);
-                this.messages.scrollTop = this.messages.scrollHeight;
-
-                const apiKey = "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";
-                const apiUrl = "https://openrouter.ai/api/v1/chat/completions";
-                
-                // System prompt to define the AI's personality and knowledge
-                const systemPrompt = `
-                    أنت مساعد ذكاء اصطناعي اسمك "مساعد عمر الرقمي" في موقع شخصي لشاب اسمه عمر عطيه الفرجانى.
-                    مهمتك هي الرد على استفسارات الزوار.
-                    يجب أن تتحدث دائما باللهجة المصرية العامية، وتكون ودوداً، مرحاً، ومساعداً. استخدم عبارات مثل "يا غالي"، "يا صاحبي"، "جامد"، واستخدم الإيموجي.
-                    
-                    هذه هي المعلومات التي تعرفها عن عمر:
-                    - الاسم الكامل: عمر عطيه الفرجانى.
-                    - العمر: 17 سنة (مواليد 30 مايو 2008).
-                    - التعليم: في الصف الثالث الثانوي (تالتة ثانوي).
-                    - الشغف والاهتمامات: البرمجة، الاختراق الأخلاقي، متابعة التكنولوجيا، والألعاب (Gaming).
-                    - السكن: قرية المُلاك، عزبة الفرجانى.
-                    - الطموح: أن يصبح مطور ويب وخبير أمن سيبراني كبير في مصر.
-                    - الخدمات التي يقدمها: 
-                        1. تطوير واجهات أمامية (Frontend) باستخدام React و Next.js.
-                        2. تصميم واجهة وتجربة مستخدم (UI/UX).
-                        3. تطبيق أساسيات الأمان للمواقع.
-                    - التقنيات التي يستخدمها: JavaScript, React, Next.js, HTML5, CSS3, TailwindCSS, GSAP, Three.js, Git, Figma, ويتعلم Python.
-                    - طرق التواصل: عبر الإيميل omarfergany100@gmail.com أو عبر روابط واتساب وفيسبوك وانستجرام الموجودة في صفحة "تواصل".
-                    
-                    قواعد الرد:
-                    - إذا سُئلت عن نكتة، قل نكتة متعلقة بالبرمجة.
-                    - إذا سُئلت عن موضوع لا تعرفه (مثل الطقس، الأخبار السياسية، نتائج المباريات)، لا تخترع إجابة، بل قل بطريقة طريفة أن هذا خارج نطاق معرفتك. مثلاً: "أنا قاعد في سيرفرات تكييفها شديد، معرفش الجو برا عامل إيه بصراحة".
-                    - حافظ على المحادثة وأبقِ الإجابات مسلية ومفيدة.
-                    - استخدم تنسيق Markdown (مثل **للنص العريض** أو القوائم) لتحسين قراءة الرد.
-                `;
-
-                // Take the last 6 messages to keep the context without sending a huge history
-                const recentHistory = this.conversationHistory.slice(-6);
-
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${apiKey}`,
-                            'Content-Type': 'application/json',
-                            'X-Title': 'Omar Fergany Portfolio', 
-                        },
-                        body: JSON.stringify({
-                            model: "openai/gpt-3.5-turbo", // A capable and widely used model
-                            messages: [
-                                { role: "system", content: systemPrompt },
-                                ...recentHistory
-                            ],
-                        }),
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    const aiText = data.choices[0].message.content;
-                    
-                    this.messages.removeChild(loadingDiv);
-                    this.addMessage(aiText, 'ai');
-
-                } catch (error) {
-                    console.error("AI API Error:", error);
-                    this.messages.removeChild(loadingDiv);
-                    const errorText = "عذراً يا غالي، حصل خطأ وأنا بحاول أرد عليك. ممكن تجرب تاني كمان شوية؟ 🔌";
-                    this.addMessage(errorText, 'ai');
-                } finally {
-                     this.showQuickReplies(["إيه هي مهارات عمر؟ 👨‍💻", "قولي معلومة عامة 💡", "إزاي أتواصل معاه؟ 📞"]);
-                }
-            }
-        };
-        chatWidget.init();
-        
-        // --- 3D Background ---
-        try {
-            let scene = new THREE.Scene();
-            let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            let renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            let stars = [];
-            for (let i = 0; i < 1000; i++) {
-                let star = new THREE.Vector3(
-                    THREE.MathUtils.randFloatSpread(2000),
-                    THREE.MathUtils.randFloatSpread(2000),
-                    THREE.MathUtils.randFloatSpread(2000)
-                );
-                stars.push(star);
-            }
-            let starGeo = new THREE.BufferGeometry().setFromPoints(stars);
-            let starMat = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 0.7 });
-            let starField = new THREE.Points(starGeo, starMat);
-            scene.add(starField);
-            camera.position.z = 1;
-            function animate() {
-                requestAnimationFrame(animate);
-                starField.rotation.y += 0.0002;
-                renderer.render(scene, camera);
-            }
-            animate();
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
             });
-        } catch(e) {
-            console.error("Three.js background failed to load.", e);
+            gsap.from(title.querySelectorAll(".word"), {
+                y: '115%', stagger: 0.1, duration: 0.5, ease: 'power3.out',
+                scrollTrigger: { trigger: title, start: "top 90%", toggleActions: "play none none none" }
+            });
         }
     });
-    </script>
+
+    // --- Service Cards ---
+    const services = [
+        { icon: 'fa-laptop-code', title: 'تطوير الواجهات', desc: 'بناء واجهات ويب تفاعلية وسريعة باستخدام أحدث التقنيات زي React و Next.js.' },
+        { icon: 'fa-palette', title: 'تصميم UI/UX', desc: 'تصميم تجارب مستخدم سهلة وجذابة بتركز على تحقيق أهدافك ورضا المستخدمين.' },
+        { icon: 'fa-user-shield', title: 'أساسيات الأمان', desc: 'تطبيق مفاهيم الأمان الأساسية لحماية مواقع الويب، كجزء من شغفه بمجال الاختراق.' }
+    ];
+    const servicesContainer = document.querySelector('#services .grid');
+    if (servicesContainer) {
+        servicesContainer.innerHTML = services.map((service, index) => `
+            <div class="bg-secondary p-8 rounded-lg shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 reveal" data-delay="${index * 0.2}">
+                <i class="fas ${service.icon} fa-3x text-primary mb-4"></i>
+                <h3 class="text-2xl font-bold mb-2">${service.title}</h3>
+                <p class="text-text-secondary-color">${service.desc}</p>
+            </div>
+        `).join('');
+    }
+    
+    // --- Nav & Mobile Menu Logic ---
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    document.querySelectorAll('.nav-link-mobile, .nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            if(link.classList.contains('nav-link-mobile')) {
+                mobileMenu.classList.add('hidden');
+            }
+            const targetId = link.getAttribute('href');
+            if(document.querySelector(targetId)) {
+               e.preventDefault();
+               document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+
+    const navLinks = document.querySelectorAll('#main-nav .nav-link');
+    const pageSections = document.querySelectorAll('main section');
+    function updateActiveLink() {
+        let current = pageSections[0]?.id || '';
+        pageSections.forEach(section => {
+            if (window.scrollY >= section.offsetTop - 150) current = section.id;
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('nav-active');
+            if (link.getAttribute('href') === '#' + current) link.classList.add('nav-active');
+        });
+    }
+    window.addEventListener('scroll', updateActiveLink);
+    updateActiveLink();
+
+    // --- Gemini AI Chatbot ---
+    const chatWidget = {
+        bubble: document.getElementById('chat-bubble'),
+        window: document.getElementById('chat-window'),
+        messages: document.getElementById('chat-messages'),
+        input: document.getElementById('chat-input'),
+        sendBtn: document.getElementById('chat-send-btn'),
+        quickReplies: document.getElementById('chat-quick-replies'),
+        apiKey: 'AIzaSyD39lIpfEjoPYM6NcOxWtM3pQym9ZrkXfo', // Your Gemini API Key
+        history: [], // To maintain conversation context
+
+        init() {
+            this.bubble.addEventListener('click', () => this.toggle());
+            this.sendBtn.addEventListener('click', () => this.sendMessage());
+            this.input.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.sendMessage(); } });
+        },
+        toggle() { 
+            this.window.classList.toggle('open');
+            if(this.window.classList.contains('open') && this.messages.children.length === 0) {
+                 this.addMessage("أهلاً بيك يا غالي! أنا مساعد عمر الرقمي، خد راحتك واسأل في أي حاجة تخطر على بالك. 😉", 'ai');
+                 this.showQuickReplies(["مين عمر؟ 🤔", "احكيلي نكتة 😂", "إيه خدماته؟ 👨‍💻"]);
+            }
+        },
+        sendMessage() {
+            const userMessage = this.input.value.trim();
+            if (!userMessage) return;
+            this.addMessage(userMessage, 'user');
+            this.input.value = '';
+            this.quickReplies.innerHTML = '';
+            this.getAIResponse(userMessage);
+        },
+        sendQuickReply(text) {
+            this.addMessage(text, 'user');
+            this.quickReplies.innerHTML = '';
+            this.getAIResponse(text);
+        },
+        addMessage(content, type) {
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            if (type === 'ai') {
+                const avatar = `<img src="https://placehold.co/40x40/0d9488/ffffff?text=AI" alt="AI Avatar">`;
+                // Use marked.parse to render Markdown from AI
+                const textContent = `<div>${marked.parse(content)}</div>`;
+                div.innerHTML = avatar + textContent;
+            } else {
+                div.textContent = content;
+            }
+            this.messages.appendChild(div);
+            this.messages.scrollTop = this.messages.scrollHeight;
+        },
+        showQuickReplies(replies) {
+            this.quickReplies.innerHTML = '';
+            replies.forEach(text => {
+                const btn = document.createElement('button');
+                btn.className = 'quick-reply-btn';
+                btn.textContent = text;
+                btn.onclick = () => this.sendQuickReply(text);
+                this.quickReplies.appendChild(btn);
+            });
+        },
+        
+        async getAIResponse(prompt) {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message ai';
+            loadingDiv.innerHTML = `<img src="https://placehold.co/40x40/0d9488/ffffff?text=AI" alt="AI Avatar"><div><span class="animate-pulse">بجمعلك الرد... 🤔</span></div>`;
+            this.messages.appendChild(loadingDiv);
+            this.messages.scrollTop = this.messages.scrollHeight;
+
+            const systemPrompt = `أنت مساعد ذكاء اصطناعي شخصي لمطور ويب اسمه عمر عطيه الفرجانى. اسمك 'مساعد عمر الرقمي'. ردودك يجب أن تكون باللهجة المصرية العامية، ودودة، ومرحة، ومفيدة. عمر شاب مصري عنده 17 سنة، في تالتة ثانوي، شغوف بالبرمجة والأمن السيبراني. يقدم خدمات تطوير واجهات أمامية (React, Next.js)، تصميم UI/UX، وأساسيات الأمان. تجنب الردود الرسمية. استخدم الكثير من الإيموجيز. كن مبدعاً في ردودك. لا تذكر أنك نموذج لغوي كبير أو تذكر اسم الشركة التي طورتك.`;
+
+            // Add user message to history
+            this.history.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = {
+                contents: [
+                    { role: "model", parts: [{ text: systemPrompt }] },
+                    ...this.history
+                ]
+            };
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${this.apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API request failed with status ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                this.messages.removeChild(loadingDiv);
+                
+                if (data.candidates && data.candidates.length > 0) {
+                    const aiText = data.candidates[0].content.parts[0].text;
+                    this.addMessage(aiText, 'ai');
+                    // Add AI response to history
+                    this.history.push({ role: "model", parts: [{ text: aiText }] });
+                } else {
+                    this.addMessage("معلش، شكلي سرحت شوية. ممكن تسأل تاني؟", 'ai');
+                }
+
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                this.messages.removeChild(loadingDiv);
+                this.addMessage("عفواً، حصل خطأ فني ومش قادر أرد عليك دلوقتي. 🔌 جرب تاني كمان شوية.", 'ai');
+            } finally {
+                // Always show some default quick replies after a response
+                this.showQuickReplies(["إيه هي مهارات عمر؟ 👨‍💻", "قولي معلومة عامة 💡", "إزاي أتواصل معاه؟ 📞"]);
+                 // Trim history to keep it from getting too long
+                if (this.history.length > 10) {
+                    this.history = this.history.slice(-10);
+                }
+            }
+        }
+    };
+    chatWidget.init();
+    
+    // --- 3D Background ---
+    try {
+        let scene = new THREE.Scene();
+        let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        let renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        let stars = [];
+        for (let i = 0; i < 1000; i++) {
+            let star = new THREE.Vector3(
+                THREE.MathUtils.randFloatSpread(2000),
+                THREE.MathUtils.randFloatSpread(2000),
+                THREE.MathUtils.randFloatSpread(2000)
+            );
+            stars.push(star);
+        }
+        let starGeo = new THREE.BufferGeometry().setFromPoints(stars);
+        let starMat = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 0.7 });
+        let starField = new THREE.Points(starGeo, starMat);
+        scene.add(starField);
+        camera.position.z = 1;
+        function animate() {
+            requestAnimationFrame(animate);
+            starField.rotation.y += 0.0002;
+            renderer.render(scene, camera);
+        }
+        animate();
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    } catch(e) {
+        console.error("Three.js background failed to load.", e);
+    }
+});
+</script>
 </body>
 </html>
+
+
