@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -26,24 +26,207 @@
             --text-secondary-color: #9ca3af; --border-color: #4b5563;
         }
         /* Base styles */
-        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: background-color 0.3s, color 0.3s; cursor: none; overflow-x: hidden;}
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: background-color 0.3s, color 0.3s; overflow-x: hidden;}
         .text-primary { color: var(--primary-color); } .bg-primary { background-color: var(--primary-color); }
         .bg-secondary { background-color: var(--bg-secondary-color); }
         
-        /* Preloader */
-        #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-color); z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; transition: opacity 0.8s ease-out, visibility 0.8s ease-out; }
-        #preloader.loaded { opacity: 0; visibility: hidden; }
-        .preloader-welcome { font-size: 1.75rem; font-weight: 700; color: var(--text-color); animation: fadeInUp 1.5s ease-out forwards; opacity: 0;}
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* --- SMART & PROFESSIONAL PRELOADER --- */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--bg-color) 0%, var(--bg-secondary-color) 100%);
+            z-index: 10000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 1; visibility: visible;
+            transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+            overflow: hidden;
+        }
+        #preloader.loaded {
+            opacity: 0; visibility: hidden; pointer-events: none;
+        }
         
-        /* Cursor, Scrollbar */
-        .cursor { width: 25px; height: 25px; border: 2px solid var(--primary-color); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: all 0.1s ease-out; }
+        /* Animated Background Particles */
+        .preloader-particles {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .particle {
+            position: absolute;
+            background: var(--primary-color);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 6s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.1; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.3; }
+        }
+        
+        .preloader-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+            max-width: 90%;
+        }
+        
+        /* Smart Loading Animation */
+        .preloader-logo {
+            width: 80px; height: 80px;
+            margin: 0 auto 30px;
+            border: 3px solid transparent;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .preloader-logo::before {
+            content: '';
+            width: 40px; height: 40px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--primary-hover-color);
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite reverse;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .preloader-welcome-text {
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-hover-color), var(--primary-color));
+            background-size: 200% 200%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+            overflow: hidden;
+            position: relative;
+            animation: gradient-shift 3s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .preloader-welcome-text .char {
+            display: inline-block;
+            transform: translateY(110%);
+            transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1), opacity 0.8s ease-in-out;
+            opacity: 0;
+        }
+        
+        /* Progress Bar */
+        .preloader-progress {
+            width: 300px;
+            max-width: 80%;
+            height: 4px;
+            background: rgba(13, 148, 136, 0.2);
+            border-radius: 2px;
+            margin: 20px auto;
+            overflow: hidden;
+            position: relative;
+        }
+        .preloader-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-hover-color));
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+        .preloader-progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            height: 100%; width: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* Loading Text */
+        .preloader-status {
+            font-size: 1rem;
+            color: var(--text-secondary-color);
+            margin-top: 15px;
+            opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+        
+        /* Scrollbar */
         #scroll-progress-bar { position: fixed; top: 0; right: 0; height: 3px; background-color: var(--primary-color); width: 0%; z-index: 100; }
         
         /* Header */
         .nav-active { color: var(--primary-color) !important; font-weight: 700; }
-        #rgb-clock { font-weight: bold; animation: rgb-glow 5s infinite linear; }
-        @keyframes rgb-glow { 0% { color: #ff2a2a; text-shadow: 0 0 5px #ff2a2a; } 16% { color: #ff7a2a; text-shadow: 0 0 5px #ff7a2a; } 33% { color: #f0ff2a; text-shadow: 0 0 5px #f0ff2a; } 50% { color: #2aff9d; text-shadow: 0 0 5px #2aff9d; } 66% { color: #2a7fff; text-shadow: 0 0 5px #2a7fff; } 83% { color: #a22aff; text-shadow: 0 0 5px #a22aff; } 100% { color: #ff2a2a; text-shadow: 0 0 5px #ff2a2a; } }
+
+        /* --- PROFESSIONAL LOGO STYLES --- */
+        .professional-name {
+            font-family: 'Amiri', serif;
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-hover-color), #0891b2, var(--primary-color));
+            background-size: 300% 300%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-flow 4s ease-in-out infinite, slide-in-right 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            text-shadow: 0 2px 4px rgba(13, 148, 136, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .professional-name::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shine-text 3s infinite;
+        }
+
+        @keyframes gradient-flow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes slide-in-right {
+            0% { 
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            100% { 
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shine-text {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .professional-name:hover {
+            animation-play-state: paused;
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
+        }
 
         /* Theme Toggle Switch */
         .theme-switch-wrapper { display: flex; align-items: center; }
@@ -67,41 +250,503 @@
         .g-title { display: block; overflow: hidden;}
         .g-title .word { transform: translateY(115%); transition: transform .5s; display: inline-block; padding-left: 4px;}
 
-        /* Chatbot Redesign */
-        #chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
-        #chat-bubble { width: 60px; height: 60px; background: linear-gradient(45deg, var(--primary-color), var(--primary-hover-color)); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 5px 20px rgba(13, 148, 136, 0.4); animation: bubble-pulse 2.5s infinite; transition: transform 0.3s ease; }
-        @keyframes bubble-pulse { 0%, 100% { transform: scale(1); box-shadow: 0 5px 20px rgba(13, 148, 136, 0.4); } 50% { transform: scale(1.05); box-shadow: 0 8px 30px rgba(13, 148, 136, 0.6); } }
-        #chat-bubble:hover { transform: scale(1.15) rotate(10deg); animation-play-state: paused; }
-        #chat-window { position: absolute; bottom: 80px; right: 0; width: 350px; max-width: 90vw; height: 500px; max-height: 70vh; background-color: var(--bg-secondary-color); border: 1px solid var(--border-color); border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; transform-origin: bottom right; transform: scale(0.5); opacity: 0; pointer-events: none; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease; }
-        #chat-window.open { transform: scale(1); opacity: 1; pointer-events: auto; }
-        #chat-messages { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .message { padding: 10px 15px; border-radius: 18px; max-width: 85%; line-height: 1.6; }
-        .message.user { background: var(--primary-color); color: white; align-self: flex-start; border-bottom-left-radius: 4px; }
-        .message.ai { background: var(--bg-color); align-self: flex-end; border-bottom-right-radius: 4px; display: flex; align-items: flex-start; gap: 8px;}
-        .message.ai img { width: 30px; height: 30px; border-radius: 50%;}
+        /* Enhanced About Section Styles */
+        .about-card {
+            background: var(--bg-secondary-color);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(13, 148, 136, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .about-card:hover::before {
+            left: 100%;
+        }
+
+        .about-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(13, 148, 136, 0.2);
+        }
+
+        .skill-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover-color));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-tag::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.3s ease;
+        }
+
+        .skill-tag:hover::before {
+            left: 100%;
+        }
+
+        .skill-tag:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(13, 148, 136, 0.4);
+        }
+
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-color);
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .achievement-item:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(13, 148, 136, 0.2);
+        }
+
+        .achievement-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* --- SMART & PROFESSIONAL CHATBOT --- */
+        #chat-widget { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            z-index: 1000; 
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        /* Enhanced Chat Bubble */
+        #chat-bubble { 
+            width: 70px; 
+            height: 70px; 
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover-color) 50%, var(--primary-color) 100%);
+            background-size: 200% 200%;
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            box-shadow: 0 8px 25px rgba(13, 148, 136, 0.4), 0 0 0 0 rgba(13, 148, 136, 0.7);
+            animation: bubble-pulse 3s infinite, gradient-rotate 4s ease-in-out infinite;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #chat-bubble::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        #chat-bubble:hover { 
+            transform: scale(1.1) rotate(5deg); 
+            animation-play-state: paused; 
+            box-shadow: 0 12px 35px rgba(13, 148, 136, 0.6), 0 0 0 10px rgba(13, 148, 136, 0.1);
+        }
+        
+        @keyframes bubble-pulse { 
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 25px rgba(13, 148, 136, 0.4), 0 0 0 0 rgba(13, 148, 136, 0.7); } 
+            50% { transform: scale(1.05); box-shadow: 0 8px 25px rgba(13, 148, 136, 0.4), 0 0 0 15px rgba(13, 148, 136, 0.2); } 
+        }
+        
+        @keyframes gradient-rotate {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        }
+        
+        /* Enhanced AI Icon */
+        .ai-icon-container {
+            width: 40px; 
+            height: 40px; 
+            position: relative;
+            z-index: 2;
+        }
+        
+        .ai-brain {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            animation: brain-pulse 2s infinite ease-in-out;
+        }
+        
+        .ai-brain::before {
+            content: '🧠';
+            font-size: 24px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            filter: brightness(0) invert(1);
+        }
+        
+        .neural-network {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+        
+        .neural-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: neural-pulse 1.5s infinite ease-in-out;
+        }
+        
+        .neural-dot:nth-child(1) { top: 20%; left: 20%; animation-delay: 0s; }
+        .neural-dot:nth-child(2) { top: 20%; right: 20%; animation-delay: 0.2s; }
+        .neural-dot:nth-child(3) { bottom: 20%; left: 20%; animation-delay: 0.4s; }
+        .neural-dot:nth-child(4) { bottom: 20%; right: 20%; animation-delay: 0.6s; }
+        .neural-dot:nth-child(5) { top: 50%; left: 50%; animation-delay: 0.8s; transform: translate(-50%, -50%); }
+        
+        @keyframes brain-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes neural-pulse {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        /* Enhanced Chat Window */
+        #chat-window { 
+            position: absolute; 
+            bottom: 90px; 
+            right: 0; 
+            width: 380px; 
+            max-width: 90vw; 
+            height: 550px; 
+            max-height: 75vh; 
+            background: var(--bg-secondary-color);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color); 
+            border-radius: 20px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.1);
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+            transform-origin: bottom right; 
+            transform: scale(0.3) translateY(20px); 
+            opacity: 0; 
+            pointer-events: none; 
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        #chat-window.open { 
+            transform: scale(1) translateY(0); 
+            opacity: 1; 
+            pointer-events: auto; 
+        }
+        
+        /* Chat Header */
+        .chat-header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover-color));
+            color: white;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chat-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: header-shine 3s infinite;
+        }
+        
+        @keyframes header-shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .chat-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .chat-status {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: status-blink 2s infinite;
+        }
+        
+        @keyframes status-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Enhanced Messages */
+        #chat-messages { 
+            flex-grow: 1; 
+            padding: 20px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px;
+            background: var(--bg-color);
+        }
+        
+        .message { 
+            padding: 12px 18px; 
+            border-radius: 20px; 
+            max-width: 85%; 
+            line-height: 1.6;
+            position: relative;
+            animation: message-appear 0.3s ease-out;
+        }
+        
+        @keyframes message-appear {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user { 
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover-color));
+            color: white; 
+            align-self: flex-start; 
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+        }
+        
+        .message.ai { 
+            background: var(--bg-secondary-color);
+            border: 1px solid var(--border-color);
+            align-self: flex-end; 
+            border-bottom-right-radius: 5px; 
+            display: flex; 
+            align-items: flex-start; 
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .message.ai .ai-avatar {
+            width: 32px; 
+            height: 32px; 
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
         .message.ai p, .message.ai ul, .message.ai ol { margin-bottom: 0.5rem; }
         .message.ai ul { padding-right: 1.2rem; list-style-type: '✅ '; }
         .message.ai ol { padding-right: 1.2rem; }
         .message.ai strong { color: var(--primary-color); }
-        .message.ai code { background-color: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; }
-        html.dark .message.ai code { background-color: rgba(255,255,255,0.1); }
-        #chat-quick-replies { padding: 5px 15px 10px; display: flex; flex-wrap: wrap; gap: 8px; }
-        .quick-reply-btn { background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 5px 12px; font-size: 0.8rem; border-radius: 15px; cursor: pointer; transition: all 0.2s; }
-        #chat-input-wrapper { display: flex; align-items: center; padding: 10px; border-top: 1px solid var(--border-color); }
-        #chat-input { flex-grow: 1; border: none; background: transparent; padding: 8px; color: var(--text-color); outline: none; }
-        #chat-send-btn { background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;}
+        .message.ai code { 
+            background-color: rgba(13, 148, 136, 0.1); 
+            padding: 3px 8px; 
+            border-radius: 6px; 
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        /* Enhanced Quick Replies */
+        #chat-quick-replies { 
+            padding: 10px 20px 15px; 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px;
+            background: var(--bg-color);
+        }
+        
+        .quick-reply-btn { 
+            background: transparent; 
+            border: 2px solid var(--primary-color); 
+            color: var(--primary-color); 
+            padding: 8px 16px; 
+            font-size: 0.85rem; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-reply-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-color);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+        
+        .quick-reply-btn:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+        }
+        
+        .quick-reply-btn:hover::before {
+            left: 0;
+        }
+        
+        /* Enhanced Input Area */
+        #chat-input-wrapper { 
+            display: flex; 
+            align-items: center; 
+            padding: 15px 20px; 
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-secondary-color);
+            border-radius: 0 0 20px 20px;
+        }
+        
+        #chat-input { 
+            flex-grow: 1; 
+            border: 2px solid var(--border-color); 
+            background: var(--bg-color);
+            padding: 12px 16px; 
+            color: var(--text-color); 
+            outline: none;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+        
+        #chat-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+        }
+        
+        #chat-send-btn { 
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover-color));
+            color: white; 
+            border: none; 
+            border-radius: 50%; 
+            width: 45px; 
+            height: 45px; 
+            font-size: 1.2rem; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+        }
+        
+        #chat-send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(13, 148, 136, 0.4);
+        }
+        
+        #chat-send-btn:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
     <div id="scroll-progress-bar"></div>
-    <div id="preloader"><div id="preloader-welcome" class="preloader-welcome">أهلاً بك في موقع عمر عطيه الفرجانى</div></div>
-    <div class="cursor"></div>
+    
+    <!-- Smart & Professional Preloader -->
+    <div id="preloader">
+        <div class="preloader-particles" id="preloader-particles"></div>
+        <div class="preloader-content">
+            <div class="preloader-logo"></div>
+            <h1 id="preloader-text" class="preloader-welcome-text"></h1>
+            <div class="preloader-progress">
+                <div class="preloader-progress-bar" id="preloader-progress-bar"></div>
+            </div>
+            <div class="preloader-status" id="preloader-status">جاري التحميل...</div>
+        </div>
+    </div>
 
     <header class="bg-secondary/80 backdrop-blur-sm shadow-md fixed top-0 left-0 right-0 z-50">
         <div class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-4">
-                <a href="#hero" class="text-xl md:text-2xl font-bold text-primary">عمر عطيه الفرجانى</a>
-                <div id="rgb-clock" class="hidden md:block tabular-nums text-sm"></div>
+                <a href="#hero" class="logo-container flex items-center gap-4" style="text-decoration: none;">
+                    <span class="professional-name">عمر عطيه الفرجانى</span>
+                </a>
             </div>
             
             <nav id="main-nav" class="hidden lg:flex items-center space-x-6 space-x-reverse text-text-color">
@@ -126,7 +771,6 @@
         </div>
         <div id="mobile-menu" class="hidden lg:hidden bg-secondary/95 backdrop-blur-sm p-4">
             <div class="flex justify-between items-center mb-4 text-sm text-text-secondary-color">
-                <div id="mobile-rgb-clock" class="tabular-nums"></div>
                 <a href="#contact" class="nav-link-mobile bg-primary text-white font-bold text-sm py-2 px-4 rounded-full">اطلب خدمة</a>
             </div>
             <a href="#hero" class="nav-link-mobile block text-center py-3 text-lg hover:bg-primary hover:text-white rounded-lg">الرئيسية</a>
@@ -147,11 +791,128 @@
 
         <section id="about" class="py-24 bg-color">
              <div class="container mx-auto px-6">
-                <div class="text-center mb-16"> <h2 class="text-4xl font-bold g-title" data-text="شغف، كود، وإبداع"></h2> </div>
-                <div class="flex flex-col lg:flex-row items-center gap-12">
-                    <div class="lg:w-1/2 reveal"><img src="https://placehold.co/600x600/1f2937/0d9488?text=Omar" alt="Omar Fergany" class="rounded-lg shadow-2xl mx-auto"> </div>
-                    <div class="lg:w-1/2 text-center lg:text-right reveal" data-delay="0.2">
-                        <p class="text-xl leading-relaxed mb-6">اسمي عمر عطيه الفرجانى، عندي 17 سنة وفي تالتة ثانوي. بحب جداً مجال البرمجة والاختراق الأخلاقي، وبشوف في كل سطر كود تحدي جديد وفرصة عشان أتعلم حاجة مميزة.</p>
+                <div class="text-center mb-16"> 
+                    <h2 class="text-4xl font-bold g-title" data-text="شغف، كود، وإبداع"></h2> 
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                    <!-- Personal Info Card -->
+                    <div class="about-card reveal">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="achievement-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary">من أنا؟</h3>
+                        </div>
+                        <p class="text-lg leading-relaxed mb-6">
+                            اسمي <strong class="text-primary">عمر عطيه الفرجانى</strong>، عندي 17 سنة وطالب في تالتة ثانوي. 
+                            اتولدت في 30 مايو 2008 في قرية الملاك بعزبة الفرجانى. 
+                            من صغري وأنا مفتون بعالم التكنولوجيا والبرمجة، وبحب أحول الأفكار المعقدة لحلول رقمية بسيطة وفعالة.
+                        </p>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-birthday-cake"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">تاريخ الميلاد</h4>
+                                <p class="text-text-secondary-color">30 مايو 2008</p>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">مكان الميلاد</h4>
+                                <p class="text-text-secondary-color">قرية الملاك - عزبة الفرجانى</p>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">المرحلة التعليمية</h4>
+                                <p class="text-text-secondary-color">طالب في الصف الثالث الثانوي</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skills & Passion Card -->
+                    <div class="about-card reveal" data-delay="0.2">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="achievement-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary">شغفي ومهاراتي</h3>
+                        </div>
+                        <p class="text-lg leading-relaxed mb-6">
+                            بحب جداً مجال <strong class="text-primary">البرمجة والاختراق الأخلاقي</strong>، وبشوف في كل سطر كود تحدي جديد وفرصة عشان أتعلم حاجة مميزة. 
+                            هدفي إني أكون مطور محترف قادر على بناء تطبيقات ومواقع تخدم المجتمع وتحل مشاكل حقيقية.
+                        </p>
+                        
+                        <h4 class="text-xl font-bold mb-4">مجالات تخصصي:</h4>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="skill-tag">تطوير الواجهات الأمامية</span>
+                            <span class="skill-tag">React & Next.js</span>
+                            <span class="skill-tag">تصميم UI/UX</span>
+                            <span class="skill-tag">الاختراق الأخلاقي</span>
+                            <span class="skill-tag">أساسيات الأمان</span>
+                            <span class="skill-tag">JavaScript</span>
+                            <span class="skill-tag">HTML & CSS</span>
+                            <span class="skill-tag">تطوير المواقع</span>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">فلسفتي في العمل</h4>
+                                <p class="text-text-secondary-color">أؤمن بأن التكنولوجيا يجب أن تكون في خدمة الإنسان، وأن كل مشروع هو فرصة لتعلم شيء جديد وإضافة قيمة حقيقية.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Vision & Goals Section -->
+                <div class="mt-16">
+                    <div class="about-card reveal" data-delay="0.4">
+                        <div class="text-center mb-8">
+                            <div class="achievement-icon mx-auto mb-4">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-primary">رؤيتي للمستقبل</h3>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="text-center">
+                                <div class="achievement-icon mx-auto mb-4">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <h4 class="text-xl font-bold mb-2">الإبداع والابتكار</h4>
+                                <p class="text-text-secondary-color">أسعى لتطوير حلول مبتكرة تجمع بين الجمال والوظيفة، وتقدم تجربة مستخدم استثنائية.</p>
+                            </div>
+                            
+                            <div class="text-center">
+                                <div class="achievement-icon mx-auto mb-4">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <h4 class="text-xl font-bold mb-2">الأمان والحماية</h4>
+                                <p class="text-text-secondary-color">أهتم بتطبيق أعلى معايير الأمان في كل مشروع، لضمان حماية البيانات والخصوصية.</p>
+                            </div>
+                            
+                            <div class="text-center">
+                                <div class="achievement-icon mx-auto mb-4">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h4 class="text-xl font-bold mb-2">خدمة المجتمع</h4>
+                                <p class="text-text-secondary-color">أؤمن بقوة التكنولوجيا في تحسين حياة الناس وحل المشاكل الحقيقية في مجتمعنا.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -175,9 +936,9 @@
                         <i class="fas fa-paper-plane ml-2"></i> omarfergany100@gmail.com
                     </a>
                     <div class="flex justify-center space-x-6 space-x-reverse">
-                        <a href="https://www.facebook.com/share/14DMwBB4TVV/" target="_blank" class="magnetic-icon text-text-secondary-color hover:text-blue-600"><i class="fab fa-facebook fa-2x"></i></a>
-                        <a href="https://www.instagram.com/fergany___x" target="_blank" class="magnetic-icon text-text-secondary-color hover:text-pink-500"><i class="fab fa-instagram fa-2x"></i></a>
-                        <a href="https://wa.me/201225860308" target="_blank" class="magnetic-icon text-text-secondary-color hover:text-green-500"><i class="fab fa-whatsapp fa-2x"></i></a>
+                        <a href="https://www.facebook.com/share/14DMwBB4TVV/" target="_blank" class="magnetic-icon text-text-secondary-color hover:text-blue-600 transition-all duration-300 transform hover:scale-125"><i class="fab fa-facebook fa-2x"></i></a>
+                        <a href="https://www.instagram.com/fergany___x" target="_blank" class="magnetic-icon text-text-secondary-color hover:text-pink-500 transition-all duration-300 transform hover:scale-125"><i class="fab fa-instagram fa-2x"></i></a>
+                        <a href="https://wa.me/201225860308" target="_blank" class="magnetic-icon text-text-secondary-color hover:text-green-500 transition-all duration-300 transform hover:scale-125"><i class="fab fa-whatsapp fa-2x"></i></a>
                     </div>
                 </div>
              </div>
@@ -188,12 +949,35 @@
     
     <div id="chat-widget">
         <div id="chat-window">
-            <div class="p-4 border-b border-custom"><h3 class="font-bold text-lg">مساعد عمر الرقمي</h3></div>
+            <div class="chat-header">
+                <h3>
+                    <i class="fas fa-robot"></i>
+                    مساعد عمر الرقمي
+                </h3>
+                <div class="chat-status">
+                    <div class="status-indicator"></div>
+                    متصل ومستعد للمساعدة
+                </div>
+            </div>
             <div id="chat-messages"></div>
             <div id="chat-quick-replies"></div>
-            <div id="chat-input-wrapper"><input id="chat-input" type="text" placeholder="اسأل أي حاجة..." autocomplete="off"><button id="chat-send-btn"><i class="fas fa-paper-plane"></i></button></div>
+            <div id="chat-input-wrapper">
+                <input id="chat-input" type="text" placeholder="اسأل أي حاجة..." autocomplete="off">
+                <button id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+            </div>
         </div>
-        <div id="chat-bubble"><i class="fas fa-robot fa-2x text-white"></i></div>
+        <div id="chat-bubble">
+            <div class="ai-icon-container">
+                <div class="ai-brain"></div>
+                <div class="neural-network">
+                    <div class="neural-dot"></div>
+                    <div class="neural-dot"></div>
+                    <div class="neural-dot"></div>
+                    <div class="neural-dot"></div>
+                    <div class="neural-dot"></div>
+                </div>
+            </div>
+        </div>
     </div>
     
 <script>
@@ -201,30 +985,120 @@ document.addEventListener('DOMContentLoaded', () => {
     // This script is responsible for all the dynamic functionality of the website.
     const docHtml = document.documentElement;
 
-    // --- Preloader ---
+    // --- Smart & Professional Preloader ---
     const preloader = document.getElementById('preloader');
-    setTimeout(() => {
-        if (preloader) preloader.classList.add('loaded');
-    }, 1500);
+    if (preloader) {
+        const textEl = document.getElementById('preloader-text');
+        const progressBar = document.getElementById('preloader-progress-bar');
+        const statusEl = document.getElementById('preloader-status');
+        const particlesContainer = document.getElementById('preloader-particles');
+        const welcomeText = "أهلاً بك في موقع عمر الفرجانى";
+
+        // Create animated particles
+        const createParticles = () => {
+            if (!particlesContainer) return;
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 4 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        };
+
+        // Split text into characters for the reveal animation
+        if(textEl) {
+            welcomeText.split('').forEach(char => {
+                const charSpan = document.createElement('span');
+                charSpan.className = 'char';
+                charSpan.innerHTML = char === ' ' ? ' ' : char;
+                textEl.appendChild(charSpan);
+            });
+        }
+
+        // Progress simulation with synchronized text animation
+        let progress = 0;
+        const statusMessages = [
+            'جاري التحميل...',
+            'تحضير الواجهة...',
+            'تحميل المحتوى...',
+            'تطبيق التصميم...',
+            'تجهيز التفاعلات...',
+            'اكتمل التحميل!'
+        ];
+
+        const updateProgress = () => {
+            if (progress < 100) {
+                progress += Math.random() * 15 + 5;
+                if (progress > 100) progress = 100;
+                
+                if(progressBar) progressBar.style.width = progress + '%';
+                
+                const statusIndex = Math.floor((progress / 100) * (statusMessages.length - 1));
+                if(statusEl) statusEl.textContent = statusMessages[statusIndex];
+                
+                // Animate text characters based on progress
+                if (textEl) {
+                    const chars = textEl.querySelectorAll('.char');
+                    const charsToAnimate = Math.floor((progress / 100) * chars.length);
+                    chars.forEach((char, index) => {
+                        if (index < charsToAnimate) {
+                            gsap.to(char, { 
+                                y: '0%', 
+                                opacity: 1, 
+                                duration: 0.6, 
+                                ease: 'power3.out'
+                            });
+                        }
+                    });
+                }
+                
+                setTimeout(updateProgress, Math.random() * 200 + 100);
+            }
+        };
+
+        // Function to hide the preloader
+        const hidePreloader = () => {
+            gsap.to(preloader, {
+                opacity: 0,
+                duration: 1,
+                ease: 'power2.inOut',
+                onComplete: () => {
+                    preloader.classList.add('loaded');
+                }
+            });
+        };
+
+        // Initialize
+        createParticles();
+        setTimeout(updateProgress, 500);
+
+        // Trigger hiding after loading
+        Promise.all([
+            new Promise(resolve => {
+                if (document.readyState === 'complete') {
+                    resolve();
+                } else {
+                    window.addEventListener('load', resolve);
+                }
+            }),
+            new Promise(resolve => setTimeout(resolve, 3500))
+        ]).then(hidePreloader).catch(hidePreloader);
+    }
 
     // --- Header Features ---
-    const clockEl = document.getElementById('rgb-clock');
-    const mobileClockEl = document.getElementById('mobile-rgb-clock');
-    const progressBar = document.getElementById('scroll-progress-bar');
+    const scrollProgressBar = document.getElementById('scroll-progress-bar');
 
     function updateHeader() {
-        const now = new Date();
-        const options = { timeZone: 'Africa/Cairo', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-        const timeString = now.toLocaleTimeString('en-US', options);
-        if (clockEl) clockEl.textContent = timeString;
-        if (mobileClockEl) mobileClockEl.textContent = timeString;
-        
-        if (progressBar) {
+        if (scrollProgressBar) {
             const scrollTotal = docHtml.scrollHeight - docHtml.clientHeight;
-            progressBar.style.width = `${(window.scrollY / scrollTotal) * 100}%`;
+            scrollProgressBar.style.width = `${(window.scrollY / scrollTotal) * 100}%`;
         }
     }
-    setInterval(updateHeader, 1000);
     window.addEventListener('scroll', updateHeader);
     updateHeader();
 
@@ -237,11 +1111,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const currentTheme = localStorage.getItem('theme') || 'light';
     applyTheme(currentTheme);
-    if (currentTheme === 'dark') themeCheckbox.checked = true;
-    
-    themeCheckbox.addEventListener('change', () => {
-        applyTheme(themeCheckbox.checked ? 'dark' : 'light');
-    });
+    if(themeCheckbox) {
+        if (currentTheme === 'dark') themeCheckbox.checked = true;
+        
+        themeCheckbox.addEventListener('change', () => {
+            applyTheme(themeCheckbox.checked ? 'dark' : 'light');
+        });
+    }
 
     // --- GSAP Word Animation Fix ---
     gsap.registerPlugin(ScrollTrigger);
@@ -286,14 +1162,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Nav & Mobile Menu Logic ---
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
-    mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    if(mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    }
     document.querySelectorAll('.nav-link-mobile, .nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
-            if(link.classList.contains('nav-link-mobile')) {
+            if(link.classList.contains('nav-link-mobile') && mobileMenu) {
                 mobileMenu.classList.add('hidden');
             }
             const targetId = link.getAttribute('href');
-            if(document.querySelector(targetId)) {
+            if(targetId && document.querySelector(targetId)) {
                e.preventDefault();
                document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
             }
@@ -303,13 +1181,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.querySelectorAll('#main-nav .nav-link');
     const pageSections = document.querySelectorAll('main section');
     function updateActiveLink() {
-        let current = pageSections[0]?.id || '';
+        let current = '';
+        if (pageSections.length > 0) {
+            current = pageSections[0].id;
+        }
         pageSections.forEach(section => {
-            if (window.scrollY >= section.offsetTop - 150) current = section.id;
+            if (section && window.scrollY >= section.offsetTop - 150) {
+                current = section.id;
+            }
         });
         navLinks.forEach(link => {
             link.classList.remove('nav-active');
-            if (link.getAttribute('href') === '#' + current) link.classList.add('nav-active');
+            if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('nav-active');
+            }
         });
     }
     window.addEventListener('scroll', updateActiveLink);
@@ -323,10 +1208,11 @@ document.addEventListener('DOMContentLoaded', () => {
         input: document.getElementById('chat-input'),
         sendBtn: document.getElementById('chat-send-btn'),
         quickReplies: document.getElementById('chat-quick-replies'),
-        apiKey: 'AIzaSyD39lIpfEjoPYM6NcOxWtM3pQym9ZrkXfo', // Your Gemini API Key
+        apiKey: 'AIzaSyD39lIpfEjoPYM6NcOxWtM3pQym9ZrkXfo', // User's Gemini API Key
         history: [], // To maintain conversation context
 
         init() {
+            if (!this.bubble || !this.window || !this.sendBtn || !this.input) return;
             this.bubble.addEventListener('click', () => this.toggle());
             this.sendBtn.addEventListener('click', () => this.sendMessage());
             this.input.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.sendMessage(); } });
@@ -335,7 +1221,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.window.classList.toggle('open');
             if(this.window.classList.contains('open') && this.messages.children.length === 0) {
                  this.addMessage("أهلاً بيك يا غالي! أنا مساعد عمر الرقمي، خد راحتك واسأل في أي حاجة تخطر على بالك. 😉", 'ai');
-                 this.showQuickReplies(["مين عمر؟ 🤔", "احكيلي نكتة 😂", "إيه خدماته؟ 👨‍💻"]);
+                 this.showQuickReplies(["مين عمر؟ 🤔", "إيه خدماته؟ 👨‍💻", "إيه هي مهارات عمر؟ 🛠️", "إزاي أتواصل معاه؟ 📞"]);
             }
         },
         sendMessage() {
@@ -355,8 +1241,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const div = document.createElement('div');
             div.className = `message ${type}`;
             if (type === 'ai') {
-                const avatar = `<img src="https://placehold.co/40x40/0d9488/ffffff?text=AI" alt="AI Avatar">`;
-                // Use marked.parse to render Markdown from AI
+                const avatar = `<div class="ai-avatar"><i class="fas fa-robot"></i></div>`;
+                // Use marked.parse to render Markdown content
                 const textContent = `<div>${marked.parse(content)}</div>`;
                 div.innerHTML = avatar + textContent;
             } else {
@@ -379,11 +1265,31 @@ document.addEventListener('DOMContentLoaded', () => {
         async getAIResponse(prompt) {
             const loadingDiv = document.createElement('div');
             loadingDiv.className = 'message ai';
-            loadingDiv.innerHTML = `<img src="https://placehold.co/40x40/0d9488/ffffff?text=AI" alt="AI Avatar"><div><span class="animate-pulse">بجمعلك الرد... 🤔</span></div>`;
+            loadingDiv.innerHTML = `<div class="ai-avatar"><i class="fas fa-robot"></i></div><div><span class="animate-pulse">بجمعلك الرد... 🤔</span></div>`;
             this.messages.appendChild(loadingDiv);
             this.messages.scrollTop = this.messages.scrollHeight;
 
-            const systemPrompt = `أنت مساعد ذكاء اصطناعي شخصي لمطور ويب اسمه عمر عطيه الفرجانى. اسمك 'مساعد عمر الرقمي'. ردودك يجب أن تكون باللهجة المصرية العامية، ودودة، ومرحة، ومفيدة. عمر شاب مصري عنده 17 سنة، في تالتة ثانوي، شغوف بالبرمجة والأمن السيبراني. يقدم خدمات تطوير واجهات أمامية (React, Next.js)، تصميم UI/UX، وأساسيات الأمان. تجنب الردود الرسمية. استخدم الكثير من الإيموجيز. كن مبدعاً في ردودك. لا تذكر أنك نموذج لغوي كبير أو تذكر اسم الشركة التي طورتك.`;
+            // UPDATED System Prompt with all necessary information
+            const systemPrompt = `أنت مساعد ذكاء اصطناعي شخصي لمطور ويب اسمه عمر عطيه الفرجانى. اسمك 'مساعد عمر الرقمي'. ردودك يجب أن تكون باللهجة المصرية العامية، ودودة، ومرحة، ومفيدة.
+
+            **معلومات أساسية عن عمر لازم تستخدمها لما حد يسأل:**
+            - **الاسم الكامل:** عمر عطيه الفرجانى.
+            - **تاريخ الميلاد:** 30 مايو 2008 (30/5/2008).
+            - **العمر:** 17 سنة (هو حالياً في تالتة ثانوي).
+            - **مكان الميلاد:** قرية الملاك، بالتحديد في عزبة الفرجانى.
+            - **الشغف والمهارات:** البرمجة، الاختراق الأخلاقي، تطوير الواجهات الأمامية (React, Next.js)، تصميم UI/UX، وأساسيات الأمان.
+
+            **معلومات التواصل مع عمر (استخدمها فقط عند السؤال عن كيفية التواصل):**
+            - **الإيميل:** omarfergany100@gmail.com
+            - **فيسبوك:** https://www.facebook.com/share/14DMwBB4TVV/
+            - **انستجرام:** https://www.instagram.com/fergany___x
+            - **واتساب:** https://wa.me/201225860308
+
+            **تعليمات مهمة ليك:**
+            1. استخدم اللهجة المصرية العامية وخليك ودود.
+            2. استخدم الإيموجيز كتير عشان تخلي الكلام ممتع.
+            3. ماتقولش أبداً إنك نموذج لغوي أو تذكر اسم الشركة اللي عملتك.
+            4. جاوب على الأسئلة بناءً على المعلومات دي. لو سُئلت عن حاجة مش مذكورة، حاول تكون مبدع في ردك أو قول إن دي معلومة عند عمر نفسه.`;
 
             // Add user message to history
             this.history.push({ role: "user", parts: [{ text: prompt }] });
@@ -398,37 +1304,35 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${this.apiKey}`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) {
-                    throw new Error(`API request failed with status ${response.status}`);
+                    const errorBody = await response.text();
+                    throw new Error(`API request failed with status ${response.status}: ${errorBody}`);
                 }
 
                 const data = await response.json();
                 
                 this.messages.removeChild(loadingDiv);
                 
-                if (data.candidates && data.candidates.length > 0) {
+                if (data.candidates && data.candidates.length > 0 && data.candidates[0].content && data.candidates[0].content.parts) {
                     const aiText = data.candidates[0].content.parts[0].text;
                     this.addMessage(aiText, 'ai');
                     // Add AI response to history
                     this.history.push({ role: "model", parts: [{ text: aiText }] });
                 } else {
+                    console.log("No valid response from API:", data);
                     this.addMessage("معلش، شكلي سرحت شوية. ممكن تسأل تاني؟", 'ai');
                 }
 
             } catch (error) {
                 console.error("Gemini API Error:", error);
                 this.messages.removeChild(loadingDiv);
-                this.addMessage("عفواً، حصل خطأ فني ومش قادر أرد عليك دلوقتي. 🔌 جرب تاني كمان شوية.", 'ai');
+                this.addMessage("عفواً، حصل خطأ فني ومش قادر أرد عليك دلوقتي. 🔌 ممكن تكون مفتاح الـ API فيه مشكلة. جرب تاني كمان شوية.", 'ai');
             } finally {
-                // Always show some default quick replies after a response
-                this.showQuickReplies(["إيه هي مهارات عمر؟ 👨‍💻", "قولي معلومة عامة 💡", "إزاي أتواصل معاه؟ 📞"]);
-                 // Trim history to keep it from getting too long
+                // Keep history trimmed to a reasonable length
                 if (this.history.length > 10) {
                     this.history = this.history.slice(-10);
                 }
@@ -439,41 +1343,65 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- 3D Background ---
     try {
-        let scene = new THREE.Scene();
-        let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        let renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        let stars = [];
-        for (let i = 0; i < 1000; i++) {
-            let star = new THREE.Vector3(
-                THREE.MathUtils.randFloatSpread(2000),
-                THREE.MathUtils.randFloatSpread(2000),
-                THREE.MathUtils.randFloatSpread(2000)
-            );
-            stars.push(star);
-        }
-        let starGeo = new THREE.BufferGeometry().setFromPoints(stars);
-        let starMat = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 0.7 });
-        let starField = new THREE.Points(starGeo, starMat);
-        scene.add(starField);
-        camera.position.z = 1;
-        function animate() {
-            requestAnimationFrame(animate);
-            starField.rotation.y += 0.0002;
-            renderer.render(scene, camera);
-        }
-        animate();
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
+        const bgCanvas = document.getElementById('bg-canvas');
+        if (bgCanvas) {
+            let scene = new THREE.Scene();
+            let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            let renderer = new THREE.WebGLRenderer({ canvas: bgCanvas, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+            let stars = [];
+            for (let i = 0; i < 1000; i++) {
+                let star = new THREE.Vector3(
+                    THREE.MathUtils.randFloatSpread(2000),
+                    THREE.MathUtils.randFloatSpread(2000),
+                    THREE.MathUtils.randFloatSpread(2000)
+                );
+                stars.push(star);
+            }
+            let starGeo = new THREE.BufferGeometry().setFromPoints(stars);
+            let starMat = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 0.7 });
+            let starField = new THREE.Points(starGeo, starMat);
+            scene.add(starField);
+            camera.position.z = 1;
+            function animate() {
+                requestAnimationFrame(animate);
+                starField.rotation.y += 0.0002;
+                renderer.render(scene, camera);
+            }
+            animate();
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
     } catch(e) {
         console.error("Three.js background failed to load.", e);
     }
+
+    // --- Reveal Animation ---
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const delay = entry.target.dataset.delay || 0;
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, delay * 1000);
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    revealElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        revealObserver.observe(el);
+    });
 });
 </script>
 </body>
 </html>
-
 
